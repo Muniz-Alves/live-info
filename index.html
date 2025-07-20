@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Notícias e Curiosidades - Ao Vivo</title>
+<title>Notícias e Curiosidades - Offline</title>
 <style>
   body {
     font-family: 'Poppins', sans-serif;
@@ -100,19 +100,19 @@
 <main>
   <section id="noticias">
     <h2>Últimas Notícias</h2>
-    <div id="lista-noticias">Carregando notícias...</div>
+    <div id="lista-noticias"></div>
   </section>
   <section id="frase">
     <h2>Frase do Dia</h2>
-    <div id="frase-dia">Carregando frase...</div>
+    <div id="frase-dia"></div>
   </section>
   <section id="curiosidades">
     <h2>Curiosidade</h2>
-    <div id="curiosidade">Carregando curiosidade...</div>
+    <div id="curiosidade"></div>
   </section>
 </main>
 <footer>
-  &copy; 2025 Pequena Vida - Dados de fontes públicas gratuitas
+  &copy; 2025 Pequena Vida - Conteúdo offline
 </footer>
 
 <script>
@@ -126,82 +126,55 @@ function atualizaRelogio() {
 setInterval(atualizaRelogio, 1000);
 atualizaRelogio();
 
-// Função para buscar notícias (API pública NewsData.io - sem chave para demos básicos)
-async function carregarNoticias() {
+// Notícias offline (dados fixos)
+const noticias = [
+  {
+    title: 'Brasil anuncia novas medidas econômicas',
+    link: 'https://g1.globo.com/economia/noticia/brasil-anuncia-novas-medidas-economicas.ghtml',
+    image_url: 'https://s2.glbimg.com/x8bCTkPYcAx5J4Hs2U8RpnqTIx4=/0x0:750x422/984x0/smart/filters:strip_icc()/s.glbimg.com/jo/g1/f/original/2023/07/15/economia.jpg'
+  },
+  {
+    title: 'Time brasileiro vence campeonato internacional',
+    link: 'https://globoesporte.globo.com/futebol/noticia/time-brasileiro-vence-campeonato.ghtml',
+    image_url: 'https://s2.glbimg.com/3EjV6fv1bI-0FfTaj2gDaCZ6qkE=/0x0:750x422/984x0/smart/filters:strip_icc()/s.glbimg.com/jo/g1/f/original/2023/07/15/futebol.jpg'
+  },
+  {
+    title: 'Tecnologia 5G avança em cidades brasileiras',
+    link: 'https://tecnologia.uol.com.br/noticias/5g-avanca-em-cidades-brasileiras.htm',
+    image_url: 'https://conteudo.imguol.com.br/c/noticias/11/2023/06/23/5g-movel-1687583727174_v2_450x337.jpg'
+  }
+];
+
+// Frase do dia offline
+const fraseDoDia = "A persistência é o caminho do êxito.";
+
+// Curiosidade offline
+const curiosidadeTexto = "Sabia que a Terra não é uma esfera perfeita? Ela é um pouco achatada nos polos.";
+
+// Mostrar notícias no HTML
+function mostrarNoticias() {
   const container = document.getElementById('lista-noticias');
-  try {
-    const res = await fetch('https://newsdata.io/api/1/news?apikey=pub_111111111111111111111111111111111111&language=pt&category=top');
-    // Nota: Esse apikey não é real, só exemplo, então vamos usar uma alternativa para demo
-    // Como alternativa, vamos buscar notícias do JSONP do inshorts API não oficial
-    // Para demo aqui, vou usar um array fake
-
-    // Como alternativa para funcionar direto, vou criar notícias fake (substituir depois)
-
-    // Remove container antigo
-    container.innerHTML = '';
-
-    // Exemplos de notícias fake (você troca por API real)
-    const noticias = [
-      {
-        title: 'Brasil anuncia novas medidas econômicas',
-        link: 'https://g1.globo.com/economia/noticia/brasil-anuncia-novas-medidas-economicas.ghtml',
-        image_url: 'https://s2.glbimg.com/x8bCTkPYcAx5J4Hs2U8RpnqTIx4=/0x0:750x422/984x0/smart/filters:strip_icc()/s.glbimg.com/jo/g1/f/original/2023/07/15/economia.jpg'
-      },
-      {
-        title: 'Time brasileiro vence campeonato internacional',
-        link: 'https://globoesporte.globo.com/futebol/noticia/time-brasileiro-vence-campeonato.ghtml',
-        image_url: 'https://s2.glbimg.com/3EjV6fv1bI-0FfTaj2gDaCZ6qkE=/0x0:750x422/984x0/smart/filters:strip_icc()/s.glbimg.com/jo/g1/f/original/2023/07/15/futebol.jpg'
-      },
-      {
-        title: 'Tecnologia 5G avança em cidades brasileiras',
-        link: 'https://tecnologia.uol.com.br/noticias/5g-avanca-em-cidades-brasileiras.htm',
-        image_url: 'https://conteudo.imguol.com.br/c/noticias/11/2023/06/23/5g-movel-1687583727174_v2_450x337.jpg'
-      }
-    ];
-
-    noticias.forEach(noticia => {
-      const div = document.createElement('div');
-      div.className = 'noticia';
-      div.innerHTML = `
-        <img src="${noticia.image_url}" alt="Imagem notícia" />
-        <div><a href="${noticia.link}" target="_blank" rel="noopener">${noticia.title}</a></div>
-      `;
-      container.appendChild(div);
-    });
-
-  } catch (e) {
-    container.textContent = 'Erro ao carregar notícias. Por favor, tente mais tarde.';
-  }
+  container.innerHTML = '';
+  noticias.forEach(noticia => {
+    const div = document.createElement('div');
+    div.className = 'noticia';
+    div.innerHTML = `
+      <img src="${noticia.image_url}" alt="Imagem notícia" />
+      <div><a href="${noticia.link}" target="_blank" rel="noopener">${noticia.title}</a></div>
+    `;
+    container.appendChild(div);
+  });
 }
 
-// Frase do dia - uso API pública para frases motivacionais
-async function carregarFrase() {
-  const container = document.getElementById('frase-dia');
-  try {
-    const res = await fetch('https://api.adviceslip.com/advice'); // API pública de conselhos em inglês
-    const data = await res.json();
-    container.textContent = data.slip.advice;
-  } catch {
-    container.textContent = 'Não foi possível carregar a frase do dia.';
-  }
-}
-
-// Curiosidade - api pública de fatos aleatórios (em inglês, mas simples)
-async function carregarCuriosidade() {
-  const container = document.getElementById('curiosidade');
-  try {
-    const res = await fetch('https://uselessfacts.jsph.pl/random.json?language=en');
-    const data = await res.json();
-    container.textContent = data.text;
-  } catch {
-    container.textContent = 'Não foi possível carregar a curiosidade.';
-  }
+// Mostrar frase e curiosidade
+function mostrarFraseEcuriosidade() {
+  document.getElementById('frase-dia').textContent = fraseDoDia;
+  document.getElementById('curiosidade').textContent = curiosidadeTexto;
 }
 
 // Chamar as funções
-carregarNoticias();
-carregarFrase();
-carregarCuriosidade();
+mostrarNoticias();
+mostrarFraseEcuriosidade();
 </script>
 </body>
 </html>
