@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel de Notícias</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -14,11 +17,13 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      min-height: 100vh;
     }
     .container {
       width: 100%;
       max-width: 900px;
       margin-top: 30px;
+      padding: 0 10px;
     }
     .carousel {
       position: relative;
@@ -26,15 +31,17 @@
       border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       height: 500px;
+      background-color: white;
     }
     .slides {
       display: flex;
       transition: transform 0.5s ease-in-out;
       width: 600%;
+      height: 100%;
     }
     .slide {
-      flex: 1 0 100%;
-      height: 500px;
+      flex: 0 0 100%;
+      height: 100%;
     }
     iframe {
       width: 100%;
@@ -48,6 +55,7 @@
       display: flex;
       justify-content: space-between;
       transform: translateY(-50%);
+      padding: 0 10px;
     }
     .btn {
       background: rgba(0, 0, 0, 0.5);
@@ -56,11 +64,13 @@
       font-size: 2rem;
       padding: 10px;
       cursor: pointer;
+      border-radius: 50%;
     }
     .footer {
       margin-top: 20px;
       font-size: 0.9em;
       color: #777;
+      text-align: center;
     }
   </style>
 </head>
@@ -87,18 +97,20 @@
   <script>
     let currentIndex = 0;
     const slides = document.getElementById('slides');
+    const totalSlides = slides.children.length;
+
     function showSlide(index) {
       slides.style.transform = `translateX(-${index * 100}%)`;
     }
     function nextSlide() {
-      currentIndex = (currentIndex + 1) % 6;
+      currentIndex = (currentIndex + 1) % totalSlides;
       showSlide(currentIndex);
     }
     function prevSlide() {
-      currentIndex = (currentIndex - 1 + 6) % 6;
+      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
       showSlide(currentIndex);
     }
-    // Auto avançar a cada 10 segundos
+
     setInterval(nextSlide, 10000);
   </script>
 </body>
