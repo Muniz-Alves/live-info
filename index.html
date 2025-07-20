@@ -1,250 +1,83 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Live Notícias</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: transparent;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #ffffff;
-    }
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+  }
 
-    .carousel {
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      background: transparent;
-    }
+  .carousel {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: transparent;
+  }
 
-    .news-item {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      max-width: 90%;
-      animation: fadeIn 0.8s ease;
-    }
+  .news-item {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 80%;
+    animation: fadeIn 0.8s ease;
+  }
 
-    .news-item.active {
-      display: flex;
-    }
+  .news-item.active {
+    display: flex;
+  }
 
-    .news-img {
-      width: 100%;
-      max-width: 960px;
-      max-height: 540px;
-      object-fit: cover;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-      margin-bottom: 24px;
-      background: #111;
-    }
+  .news-img {
+    width: 100%;
+    max-width: 640px;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    margin-bottom: 16px;
+    background: #111;
+  }
 
-    .news-title {
-      font-size: 2.2rem;
-      font-weight: 700;
-      line-height: 1.4;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.8);
-      padding: 0 20px;
-    }
+  .news-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+    padding: 0 10px;
+  }
 
-    .controls {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 20px;
-      transform: translateY(-50%);
-    }
+  .controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 12px;
+    transform: translateY(-50%);
+  }
 
-    .controls button {
-      background: rgba(0, 0, 0, 0.5);
-      border: none;
-      color: #fff;
-      font-size: 2rem;
-      padding: 10px 16px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
+  .controls button {
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: #fff;
+    font-size: 1.8rem;
+    padding: 8px 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
 
-    .controls button:hover {
-      background: rgba(0, 0, 0, 0.8);
-    }
+  .controls button:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-</head>
-<body>
-  <div class="carousel" id="carousel">
-    <div class="news-item active" id="item-0">
-      <div class="news-title">Carregando notícias...</div>
-    </div>
-    <div class="controls">
-      <button onclick="prevNews()">❮</button>
-      <button onclick="nextNews()">❯</button>
-    </div>
-  </div>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 
-  <script>
-    const feeds = [
-      'https://g1.globo.com/rss/g1/',
-      'https://rss.uol.com.br/feed/noticias.xml',
-      'https://www.r7.com/rss/',
-      'https://www.cnnbrasil.com.br/rss/',
-      'https://exame.com/feed/',
-      'https://www.bbc.com/portuguese/index.xml',
-      'https://www.nexojornal.com.br/rss',
-      'https://feeds.folha.uol.com.br/cotidiano/rss091.xml',
-      'https://feeds.folha.uol.com.br/ilustrada/rss091.xml',
-      'https://valor.globo.com/rss/',
-      'https://www.infomoney.com.br/feed/',
-      'https://www.gov.br/agenciabrasil/rss',
-      'https://www.tecmundo.com.br/rss',
-      'https://olhardigital.com.br/feed/',
-      'https://www.autoesporte.com.br/rss',
-      'https://www.espn.com.br/rss',
-      'https://feeds.poder360.com.br/poder360',
-      'https://www.cartaeducacao.com.br/feed/',
-      'https://canaltech.com.br/rss/',
-      'https://revistagalileu.globo.com/rss/',
-      'https://oglobo.globo.com/rss.xml',
-      'https://br.financas.yahoo.com/rss/',
-      'https://www.metropoles.com/feed',
-      'https://economia.ig.com.br/rss.xml',
-      'https://diariodopoder.com.br/feed/',
-      'https://www.terra.com.br/rss/0,,EI9,00.xml',
-      'https://www.cartacapital.com.br/feed/',
-      'https://www.istoedinheiro.com.br/feed/',
-      'https://www.jornaldocomercio.com/_conteudo/rss.xml',
-      'https://revistaforum.com.br/feed/',
-      'https://noticias.r7.com/economia/feed.xml',
-      'https://www.moneytimes.com.br/feed/',
-      'https://epocanegocios.globo.com/rss/ultimas/feed.xml',
-      'https://www.seudinheiro.com/feed/',
-      'https://boainformacao.com.br/feed/',
-      'https://www.tudocelular.com/rss.xml',
-      'https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/noticias/rss.xml',
-      'https://www.todamateria.com.br/rss.xml',
-      'https://istoe.com.br/feed/',
-      'https://www.portaldoholanda.com.br/rss.xml',
-      'https://www.midianews.com.br/rss/',
-      'https://www.gazetadopovo.com.br/rss/',
-      'https://www.poder360.com.br/feed/',
-      'https://www.em.com.br/rss/',
-      'https://www.otempo.com.br/cmlink/lazer.ultimas.rss',
-      'https://jovempan.com.br/feed',
-      'https://www.cnnbrasil.com.br/rss/politica/'
-    ];
-
-    let noticias = [];
-    let index = 0;
-
-    function decodeHTML(html) {
-      const txt = document.createElement('textarea');
-      txt.innerHTML = html;
-      return txt.value;
-    }
-
-    function limparTexto(texto) {
-      return texto
-        .replace(/�/g, '')
-        .replace(/\?o/g, 'ão')
-        .replace(/\?e/g, 'é')
-        .replace(/\?a/g, 'á')
-        .replace(/\?i/g, 'í')
-        .replace(/\?u/g, 'ú')
-        .replace(/\?c/g, 'ç')
-        .replace(/\?\?/g, '')
-        .replace(/\?/g, '')
-        .trim();
-    }
-
-    function extractImage(description) {
-      const match = description.match(/<img[^>]+src="([^"]+)"/);
-      return match ? match[1] : null;
-    }
-
-    async function carregarNoticias() {
-      for (const feed of feeds) {
-        const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}`;
-        try {
-          const res = await fetch(url);
-          const data = await res.json();
-          data.items.slice(0, 2).forEach(item => {
-            const imagemExtraida = extractImage(item.description);
-            const imagemFinal = imagemExtraida || item.thumbnail || null;
-            if (imagemFinal) {
-              noticias.push({
-                titulo: limparTexto(decodeHTML(item.title)),
-                imagem: imagemFinal
-              });
-            }
-          });
-        } catch (e) {
-          console.warn('Erro ao carregar feed:', feed);
-        }
-      }
-      atualizarCarrossel();
-    }
-
-    function atualizarCarrossel() {
-      const container = document.getElementById('carousel');
-      if (noticias.length === 0) {
-        container.innerHTML = `
-          <div class="news-item active">
-            <div class="news-title">Nenhuma notícia carregada.</div>
-          </div>`;
-        return;
-      }
-
-      container.innerHTML = noticias.map((n, i) => `
-        <div class="news-item ${i === 0 ? 'active' : ''}" id="item-${i}">
-          <img src="${n.imagem}" class="news-img" alt="imagem" onerror="this.style.display='none'">
-          <div class="news-title">${n.titulo}</div>
-        </div>
-      `).join('') + `
-        <div class="controls">
-          <button onclick="prevNews()">❮</button>
-          <button onclick="nextNews()">❯</button>
-        </div>`;
-    }
-
-    function showSlide(i) {
-      document.querySelectorAll('.news-item').forEach(item => item.classList.remove('active'));
-      const el = document.getElementById(`item-${i}`);
-      if (el) el.classList.add('active');
-    }
-
-    function nextNews() {
-      if (noticias.length === 0) return;
-      index = (index + 1) % noticias.length;
-      showSlide(index);
-    }
-
-    function prevNews() {
-      if (noticias.length === 0) return;
-      index = (index - 1 + noticias.length) % noticias.length;
-      showSlide(index);
-    }
-
-    setInterval(() => {
-      if (noticias.length) nextNews();
-    }, 15000); // 15 segundos por notícia
-
-    carregarNoticias();
-  </script>
-</body>
-</html>
