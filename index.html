@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Info Moderno</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      color: #1e293b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+    #clock {
+      font-weight: 600;
+      font-size: 28px;
+      margin-bottom: 25px;
+      color: #334155;
+      letter-spacing: 1px;
+    }
+    #slide-container {
+      position: relative;
+      width: 90%;
+      max-width: 900px;
+      height: 320px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      overflow: hidden;
+      padding: 30px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+    .slide {
+      position: absolute;
+      top: 30px;
+      left: 40px;
+      right: 40px;
+      bottom: 30px;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .slide.active {
+      opacity: 1;
+      position: relative;
+    }
+    .slide h2 {
+      margin: 0 0 15px;
+      font-weight: 600;
+      font-size: 26px;
+      color: #1e293b;
+      line-height: 1.2;
+    }
+    .slide img {
+      max-width: 100%;
+      max-height: 160px;
+      border-radius: 14px;
+      object-fit: cover;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .slide p {
+      font-size: 20px;
+      color: #475569;
+      line-height: 1.5;
+      max-width: 700px;
+    }
+  </style>
+</head>
+<body>
+  <div id="clock">Carregando hora...</div>
+  <div id="slide-container"></div>
+
+  <script>
+    function updateClock() {
+      document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    const slideContainer = document.getElementById('slide-container');
+    let slides = [], current = 0;
+
+    function addSlide(title, imgUrl, text) {
+      const s = document.createElement('div');
+      s.className = 'slide';
+      s.innerHTML = `
+        ${imgUrl ? `<img src="${imgUrl}" alt="Imagem da notícia">` : ''}
+        <h2>${title}</h2>
+        <p>${text}</p>`;
+      slideContainer.appendChild(s);
+      slides.push(s);
+    }
+
+    function showCurrent() {
+      slides.forEach((el, i) => el.classList.toggle('active', i === current));
+    }
+
+    setInterval(() => {
+      current = (current + 1) % slides.length;
+      showCurrent();
+    }, 6000);
+
+    fetch('https://api.allorigins.win/raw?url=http://g1.globo.com/dynamo/brasil/rss2.xml')
+      .then(res => res.text())
+      .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+      .then(data => {
+        const items = data.querySelectorAll('item');
+        items.forEach((item, i) => {
+          if (i >= 5) return;
+          const title = item.querySelector('title').textContent;
+          const desc = item.querySelector('description').textContent.replace(/<[^>]*>?/gm, '').slice(0, 300) + '...';
+          const media = item.getElementsByTagName('media:content')[0];
+          const img = media ? media.getAttribute('url') : '';
+          addSlide(title, img, desc);
+        });
+
+        addSlide('📌 Curiosidade do dia', '', 'No dia 20 de julho de 1969, o homem pisou na Lua pela primeira vez.');
+        addSlide('💬 Frase inspiradora', '', '“O único impossível é aquilo que você não tenta.”');
+
+        showCurrent();
+      })
+      .catch(err => {
+        console.error(err);
+        addSlide('Erro ao carregar notícias', '', 'Por favor, recarregue a página ou tente mais tarde.');
+        showCurrent();
+      });
+  </script>
+</body>
+</html>
