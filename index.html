@@ -1,180 +1,77 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Notícias e Curiosidades - Offline</title>
-<style>
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #6e8efb, #a777e3);
-    color: #fff;
-    margin: 0; padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-  }
-  header {
-    padding: 20px;
-    text-align: center;
-  }
-  h1 {
-    margin: 0;
-    font-weight: 700;
-  }
-  #relogio {
-    font-size: 18px;
-    margin-top: 5px;
-    font-weight: 500;
-  }
-  main {
-    flex: 1;
-    width: 90%;
-    max-width: 900px;
-    margin-bottom: 40px;
-  }
-  section {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 30px;
-  }
-  section h2 {
-    margin-top: 0;
-    border-bottom: 2px solid #fff;
-    padding-bottom: 8px;
-  }
-  .noticia {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 15px;
-  }
-  .noticia img {
-    width: 120px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 10px;
-    flex-shrink: 0;
-  }
-  .noticia div {
-    flex: 1;
-  }
-  .noticia a {
-    color: #ffd700;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1.1em;
-  }
-  .noticia a:hover {
-    text-decoration: underline;
-  }
-  #frase-dia, #curiosidade {
-    font-style: italic;
-    font-size: 1.2em;
-    margin-top: 10px;
-  }
-  footer {
-    text-align: center;
-    padding: 10px;
-    font-size: 14px;
-    color: #ddd;
-  }
-  @media (max-width: 600px) {
-    .noticia img {
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Notícias e Clima</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      color: #222;
+    }
+    .painel {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 16px;
+    }
+    .titulo {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    iframe {
+      border: none;
       width: 100%;
-      height: auto;
+      height: 300px;
+      border-radius: 8px;
     }
-    .noticia {
-      flex-direction: column;
+    .footer {
+      text-align: center;
+      font-size: 0.9em;
+      color: #777;
+      margin-top: 30px;
     }
-  }
-</style>
+  </style>
 </head>
 <body>
-<header>
-  <h1>Notícias & Curiosidades do Dia</h1>
-  <div id="relogio"></div>
-</header>
-<main>
-  <section id="noticias">
-    <h2>Últimas Notícias</h2>
-    <div id="lista-noticias"></div>
-  </section>
-  <section id="frase">
-    <h2>Frase do Dia</h2>
-    <div id="frase-dia"></div>
-  </section>
-  <section id="curiosidades">
-    <h2>Curiosidade</h2>
-    <div id="curiosidade"></div>
-  </section>
-</main>
-<footer>
-  &copy; 2025 Pequena Vida - Conteúdo offline
-</footer>
-
-<script>
-// Relógio em tempo real
-function atualizaRelogio() {
-  const now = new Date();
-  const hora = now.toLocaleTimeString('pt-BR', { hour12: false });
-  const data = now.toLocaleDateString('pt-BR');
-  document.getElementById('relogio').textContent = `${data} - ${hora}`;
-}
-setInterval(atualizaRelogio, 1000);
-atualizaRelogio();
-
-// Notícias offline (dados fixos)
-const noticias = [
-  {
-    title: 'Brasil anuncia novas medidas econômicas',
-    link: 'https://g1.globo.com/economia/noticia/brasil-anuncia-novas-medidas-economicas.ghtml',
-    image_url: 'https://s2.glbimg.com/x8bCTkPYcAx5J4Hs2U8RpnqTIx4=/0x0:750x422/984x0/smart/filters:strip_icc()/s.glbimg.com/jo/g1/f/original/2023/07/15/economia.jpg'
-  },
-  {
-    title: 'Time brasileiro vence campeonato internacional',
-    link: 'https://globoesporte.globo.com/futebol/noticia/time-brasileiro-vence-campeonato.ghtml',
-    image_url: 'https://s2.glbimg.com/3EjV6fv1bI-0FfTaj2gDaCZ6qkE=/0x0:750x422/984x0/smart/filters:strip_icc()/s.glbimg.com/jo/g1/f/original/2023/07/15/futebol.jpg'
-  },
-  {
-    title: 'Tecnologia 5G avança em cidades brasileiras',
-    link: 'https://tecnologia.uol.com.br/noticias/5g-avanca-em-cidades-brasileiras.htm',
-    image_url: 'https://conteudo.imguol.com.br/c/noticias/11/2023/06/23/5g-movel-1687583727174_v2_450x337.jpg'
-  }
-];
-
-// Frase do dia offline
-const fraseDoDia = "A persistência é o caminho do êxito.";
-
-// Curiosidade offline
-const curiosidadeTexto = "Sabia que a Terra não é uma esfera perfeita? Ela é um pouco achatada nos polos.";
-
-// Mostrar notícias no HTML
-function mostrarNoticias() {
-  const container = document.getElementById('lista-noticias');
-  container.innerHTML = '';
-  noticias.forEach(noticia => {
-    const div = document.createElement('div');
-    div.className = 'noticia';
-    div.innerHTML = `
-      <img src="${noticia.image_url}" alt="Imagem notícia" />
-      <div><a href="${noticia.link}" target="_blank" rel="noopener">${noticia.title}</a></div>
-    `;
-    container.appendChild(div);
-  });
-}
-
-// Mostrar frase e curiosidade
-function mostrarFraseEcuriosidade() {
-  document.getElementById('frase-dia').textContent = fraseDoDia;
-  document.getElementById('curiosidade').textContent = curiosidadeTexto;
-}
-
-// Chamar as funções
-mostrarNoticias();
-mostrarFraseEcuriosidade();
-</script>
+  <h1 style="text-align:center; margin: 20px 0;">Painel de Informações ao Vivo</h1>
+  <div class="painel">
+    <div class="card">
+      <div class="titulo">Previsão do Tempo (Nova Iguaçu)</div>
+      <iframe src="https://www.tempo.com/widget/" title="Clima"></iframe>
+    </div>
+    <div class="card">
+      <div class="titulo">Notícias Populares</div>
+      <iframe src="https://g1.globo.com/" title="G1 Notícias"></iframe>
+    </div>
+    <div class="card">
+      <div class="titulo">Futebol ao Vivo</div>
+      <iframe src="https://ge.globo.com/futebol/brasileirao-serie-a/" title="Futebol"></iframe>
+    </div>
+    <div class="card">
+      <div class="titulo">Tecnologia e Curiosidades</div>
+      <iframe src="https://www.tecmundo.com.br/" title="Tecmundo"></iframe>
+    </div>
+    <div class="card">
+      <div class="titulo">Meu GitHub</div>
+      <iframe src="https://muniz-alves.github.io/live-info/" title="GitHub"></iframe>
+    </div>
+    <div class="card">
+      <div class="titulo">Internet via Starlink</div>
+      <iframe src="https://www.starlink.com/pt" title="Starlink"></iframe>
+    </div>
+  </div>
+  <div class="footer">Feito por Muniz • Atualizado automaticamente via iframes</div>
 </body>
 </html>
