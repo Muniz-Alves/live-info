@@ -111,6 +111,17 @@
     let noticias = [];
     let index = 0;
 
+    function decodeHTML(html) {
+      const txt = document.createElement("textarea");
+      txt.innerHTML = html;
+      return txt.value;
+    }
+
+    function extractImage(description) {
+      const match = description.match(/<img[^>]+src="([^"]+)"/);
+      return match ? match[1] : null;
+    }
+
     async function carregarNoticias() {
       for (const feed of feeds) {
         const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}`;
@@ -118,11 +129,12 @@
           const res = await fetch(url);
           const data = await res.json();
           data.items.slice(0, 3).forEach(item => {
+            const imagemExtraida = extractImage(item.description);
             noticias.push({
-              titulo: item.title,
-              descricao: item.description.replace(/<[^>]+>/g, '').slice(0, 120) + '...',
+              titulo: decodeHTML(item.title),
+              descricao: decodeHTML(item.description.replace(/<[^>]+>/g, '').slice(0, 120) + '...'),
               link: item.link,
-              imagem: item.thumbnail || 'https://via.placeholder.com/600x180?text=Notícia'
+              imagem: imagemExtraida || item.thumbnail || 'https://via.placeholder.com/600x180?text=Notícia'
             });
           });
         } catch (e) {
