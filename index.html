@@ -3,35 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Carrossel de Notícias</title>
+  <title>Live Notícias</title>
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #e2e8f0, #f8fafc);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px 20px;
-      color: #1e293b;
-    }
-
-    h1 {
-      margin-bottom: 30px;
-      font-weight: 700;
-      font-size: 2.2rem;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      color: #ffffff;
     }
 
     .carousel {
       width: 100%;
-      max-width: 640px;
-      background: #fff;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
-      user-select: none;
+      background: transparent;
     }
 
     .news-item {
@@ -39,102 +29,65 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      padding: 20px 24px 32px;
-      transition: opacity 0.5s ease;
+      max-width: 90%;
+      animation: fadeIn 0.8s ease;
     }
 
     .news-item.active {
       display: flex;
-      animation: fadeIn 0.6s ease forwards;
     }
 
     .news-img {
       width: 100%;
-      max-height: 220px;
+      max-width: 960px;
+      max-height: 540px;
       object-fit: cover;
-      border-radius: 14px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      background-color: #d1d5db;
-      transition: transform 0.3s ease;
-    }
-
-    .news-img:hover {
-      transform: scale(1.05);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      margin-bottom: 24px;
+      background: #111;
     }
 
     .news-title {
-      font-size: 1.3rem;
+      font-size: 2.2rem;
       font-weight: 700;
-      margin-bottom: 12px;
-      color: #334155;
-      line-height: 1.3;
-      user-select: text;
+      line-height: 1.4;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+      padding: 0 20px;
     }
 
     .controls {
-      display: flex;
-      justify-content: space-between;
       position: absolute;
       top: 50%;
       width: 100%;
-      padding: 0 12px;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
       transform: translateY(-50%);
-      pointer-events: auto;
     }
 
     .controls button {
-      background: rgba(51, 65, 85, 0.7);
+      background: rgba(0, 0, 0, 0.5);
       border: none;
-      color: #f1f5f9;
-      font-size: 1.8rem;
-      padding: 10px 14px;
-      cursor: pointer;
+      color: #fff;
+      font-size: 2rem;
+      padding: 10px 16px;
       border-radius: 50%;
-      box-shadow: 0 4px 8px rgba(51, 65, 85, 0.3);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      transition: background 0.3s;
     }
 
     .controls button:hover {
-      background: #334155;
-      box-shadow: 0 6px 14px rgba(51, 65, 85, 0.5);
-    }
-
-    .footer {
-      margin-top: 25px;
-      font-size: 0.85rem;
-      color: #64748b;
-      text-align: center;
-      max-width: 640px;
-      line-height: 1.5;
-      user-select: none;
+      background: rgba(0, 0, 0, 0.8);
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Responsivo */
-    @media (max-width: 480px) {
-      .news-title {
-        font-size: 1.1rem;
-      }
-      .controls button {
-        font-size: 1.5rem;
-        padding: 8px 12px;
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <h1>📰 Carrossel de Notícias</h1>
   <div class="carousel" id="carousel">
     <div class="news-item active" id="item-0">
       <div class="news-title">Carregando notícias...</div>
@@ -144,29 +97,56 @@
       <button onclick="nextNews()">❯</button>
     </div>
   </div>
-  <div class="footer">
-    Fontes: G1, UOL, R7, CNN Brasil, Exame, BBC, Nexo, Folha, ESPN, Olhar Digital,
-    AutoEsporte, Valor Econômico, Infomoney, Agência Brasil...
-  </div>
 
   <script>
     const feeds = [
       'https://g1.globo.com/rss/g1/',
-      'https://www.tecmundo.com.br/rss',
       'https://rss.uol.com.br/feed/noticias.xml',
       'https://www.r7.com/rss/',
       'https://www.cnnbrasil.com.br/rss/',
       'https://exame.com/feed/',
-      'https://olhardigital.com.br/feed/',
-      'https://www.autoesporte.com.br/rss',
-      'https://www.espn.com.br/rss',
-      'https://www.gov.br/agenciabrasil/rss',
+      'https://www.bbc.com/portuguese/index.xml',
+      'https://www.nexojornal.com.br/rss',
       'https://feeds.folha.uol.com.br/cotidiano/rss091.xml',
       'https://feeds.folha.uol.com.br/ilustrada/rss091.xml',
       'https://valor.globo.com/rss/',
       'https://www.infomoney.com.br/feed/',
-      'https://www.nexojornal.com.br/rss',
-      'https://www.bbc.com/portuguese/index.xml'
+      'https://www.gov.br/agenciabrasil/rss',
+      'https://www.tecmundo.com.br/rss',
+      'https://olhardigital.com.br/feed/',
+      'https://www.autoesporte.com.br/rss',
+      'https://www.espn.com.br/rss',
+      'https://feeds.poder360.com.br/poder360',
+      'https://www.cartaeducacao.com.br/feed/',
+      'https://canaltech.com.br/rss/',
+      'https://revistagalileu.globo.com/rss/',
+      'https://oglobo.globo.com/rss.xml',
+      'https://br.financas.yahoo.com/rss/',
+      'https://www.metropoles.com/feed',
+      'https://economia.ig.com.br/rss.xml',
+      'https://diariodopoder.com.br/feed/',
+      'https://www.terra.com.br/rss/0,,EI9,00.xml',
+      'https://www.cartacapital.com.br/feed/',
+      'https://www.istoedinheiro.com.br/feed/',
+      'https://www.jornaldocomercio.com/_conteudo/rss.xml',
+      'https://revistaforum.com.br/feed/',
+      'https://noticias.r7.com/economia/feed.xml',
+      'https://www.moneytimes.com.br/feed/',
+      'https://epocanegocios.globo.com/rss/ultimas/feed.xml',
+      'https://www.seudinheiro.com/feed/',
+      'https://boainformacao.com.br/feed/',
+      'https://www.tudocelular.com/rss.xml',
+      'https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/noticias/rss.xml',
+      'https://www.todamateria.com.br/rss.xml',
+      'https://istoe.com.br/feed/',
+      'https://www.portaldoholanda.com.br/rss.xml',
+      'https://www.midianews.com.br/rss/',
+      'https://www.gazetadopovo.com.br/rss/',
+      'https://www.poder360.com.br/feed/',
+      'https://www.em.com.br/rss/',
+      'https://www.otempo.com.br/cmlink/lazer.ultimas.rss',
+      'https://jovempan.com.br/feed',
+      'https://www.cnnbrasil.com.br/rss/politica/'
     ];
 
     let noticias = [];
@@ -203,18 +183,18 @@
         try {
           const res = await fetch(url);
           const data = await res.json();
-          data.items.slice(0, 3).forEach(item => {
+          data.items.slice(0, 2).forEach(item => {
             const imagemExtraida = extractImage(item.description);
             const imagemFinal = imagemExtraida || item.thumbnail || null;
             if (imagemFinal) {
               noticias.push({
                 titulo: limparTexto(decodeHTML(item.title)),
-                imagem: imagemFinal,
+                imagem: imagemFinal
               });
             }
           });
         } catch (e) {
-          console.error('Erro ao carregar feed:', feed);
+          console.warn('Erro ao carregar feed:', feed);
         }
       }
       atualizarCarrossel();
@@ -225,23 +205,17 @@
       if (noticias.length === 0) {
         container.innerHTML = `
           <div class="news-item active">
-            <div class="news-title">Nenhuma notícia disponível no momento.</div>
-          </div>
-        `;
+            <div class="news-title">Nenhuma notícia carregada.</div>
+          </div>`;
         return;
       }
-      container.innerHTML =
-        noticias
-          .map(
-            (n, i) => `
-          <div class="news-item ${i === 0 ? 'active' : ''}" id="item-${i}">
-            <img src="${n.imagem}" class="news-img" alt="imagem" onerror="this.style.display='none'">
-            <div class="news-title">${n.titulo}</div>
-          </div>
-        `
-          )
-          .join('') +
-        `
+
+      container.innerHTML = noticias.map((n, i) => `
+        <div class="news-item ${i === 0 ? 'active' : ''}" id="item-${i}">
+          <img src="${n.imagem}" class="news-img" alt="imagem" onerror="this.style.display='none'">
+          <div class="news-title">${n.titulo}</div>
+        </div>
+      `).join('') + `
         <div class="controls">
           <button onclick="prevNews()">❮</button>
           <button onclick="nextNews()">❯</button>
@@ -249,7 +223,6 @@
     }
 
     function showSlide(i) {
-      const total = noticias.length;
       document.querySelectorAll('.news-item').forEach(item => item.classList.remove('active'));
       const el = document.getElementById(`item-${i}`);
       if (el) el.classList.add('active');
@@ -269,7 +242,7 @@
 
     setInterval(() => {
       if (noticias.length) nextNews();
-    }, 10000);
+    }, 15000); // 15 segundos por notícia
 
     carregarNoticias();
   </script>
