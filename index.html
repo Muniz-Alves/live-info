@@ -3,115 +3,150 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de Notícias</title>
+  <title>Carrossel de Notícias</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f0f2f5;
-      color: #222;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
       display: flex;
-      justify-content: center;
-      align-items: center;
       flex-direction: column;
-      min-height: 100vh;
-    }
-    .container {
-      width: 100%;
-      max-width: 900px;
-      margin-top: 30px;
-      padding: 0 10px;
+      align-items: center;
+      padding: 20px;
     }
     .carousel {
-      position: relative;
-      overflow: hidden;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      height: 500px;
-      background-color: white;
-    }
-    .slides {
-      display: flex;
-      transition: transform 0.5s ease-in-out;
-      width: 600%;
-      height: 100%;
-    }
-    .slide {
-      flex: 0 0 100%;
-      height: 100%;
-    }
-    iframe {
       width: 100%;
-      height: 100%;
-      border: none;
+      max-width: 800px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .news-item {
+      display: none;
+      padding: 20px;
+    }
+    .news-item.active {
+      display: block;
+    }
+    .news-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .news-desc {
+      font-size: 1em;
+      color: #555;
+    }
+    .news-link {
+      margin-top: 10px;
+      display: inline-block;
+      text-decoration: none;
+      color: #0066cc;
     }
     .controls {
+      display: flex;
+      justify-content: space-between;
       position: absolute;
       top: 50%;
       width: 100%;
-      display: flex;
-      justify-content: space-between;
       transform: translateY(-50%);
-      padding: 0 10px;
     }
-    .btn {
-      background: rgba(0, 0, 0, 0.5);
+    .controls button {
+      background: rgba(0,0,0,0.4);
       border: none;
       color: white;
-      font-size: 2rem;
+      font-size: 1.5rem;
       padding: 10px;
       cursor: pointer;
-      border-radius: 50%;
     }
     .footer {
-      margin-top: 20px;
-      font-size: 0.9em;
+      margin-top: 15px;
+      font-size: 0.8em;
       color: #777;
-      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1 style="text-align:center">Painel de Notícias</h1>
-    <div class="carousel">
-      <div class="slides" id="slides">
-        <div class="slide"><iframe src="https://www.tempo.com/widget/" title="Clima Nova Iguaçu"></iframe></div>
-        <div class="slide"><iframe src="https://g1.globo.com/" title="G1 Notícias"></iframe></div>
-        <div class="slide"><iframe src="https://ge.globo.com/futebol/brasileirao-serie-a/" title="Brasileirão"></iframe></div>
-        <div class="slide"><iframe src="https://www.tecmundo.com.br/" title="Tecmundo"></iframe></div>
-        <div class="slide"><iframe src="https://muniz-alves.github.io/live-info/" title="GitHub Muniz"></iframe></div>
-        <div class="slide"><iframe src="https://www.starlink.com/pt" title="Starlink"></iframe></div>
-      </div>
-      <div class="controls">
-        <button class="btn" onclick="prevSlide()">❮</button>
-        <button class="btn" onclick="nextSlide()">❯</button>
-      </div>
+  <h1>📰 Carrossel de Notícias</h1>
+  <div class="carousel" id="carousel">
+    <div class="news-item active" id="item-0">
+      <div class="news-title">Carregando notícias...</div>
     </div>
-    <div class="footer">Feito por Muniz • Última atualização automática via iframe</div>
+    <div class="controls">
+      <button onclick="prevNews()">❮</button>
+      <button onclick="nextNews()">❯</button>
+    </div>
   </div>
+  <div class="footer">Fontes: G1, UOL, TecMundo • Atualização automática via RSS</div>
 
   <script>
-    let currentIndex = 0;
-    const slides = document.getElementById('slides');
-    const totalSlides = slides.children.length;
+    const feeds = [
+      'https://g1.globo.com/rss/g1/',
+      'https://www.tecmundo.com.br/rss',
+      'https://rss.uol.com.br/feed/noticias.xml'
+    ];
 
-    function showSlide(index) {
-      slides.style.transform = `translateX(-${index * 100}%)`;
-    }
-    function nextSlide() {
-      currentIndex = (currentIndex + 1) % totalSlides;
-      showSlide(currentIndex);
-    }
-    function prevSlide() {
-      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-      showSlide(currentIndex);
+    let noticias = [];
+    let index = 0;
+
+    async function carregarNoticias() {
+      for (const feed of feeds) {
+        const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          data.items.slice(0, 3).forEach(item => {
+            noticias.push({
+              titulo: item.title,
+              descricao: item.description.replace(/<[^>]+>/g, ''),
+              link: item.link
+            });
+          });
+        } catch (e) {
+          console.error('Erro ao carregar feed:', feed);
+        }
+      }
+      atualizarCarrossel();
     }
 
-    setInterval(nextSlide, 10000);
+    function atualizarCarrossel() {
+      const container = document.getElementById('carousel');
+      container.innerHTML = noticias.map((n, i) => `
+        <div class="news-item ${i === 0 ? 'active' : ''}" id="item-${i}">
+          <div class="news-title">${n.titulo}</div>
+          <div class="news-desc">${n.descricao}</div>
+          <a class="news-link" href="${n.link}" target="_blank">Leia mais</a>
+        </div>
+      `).join('') + `
+        <div class="controls">
+          <button onclick="prevNews()">❮</button>
+          <button onclick="nextNews()">❯</button>
+        </div>`;
+    }
+
+    function showSlide(i) {
+      const total = noticias.length;
+      document.querySelectorAll('.news-item').forEach(item => item.classList.remove('active'));
+      document.getElementById(`item-${i}`).classList.add('active');
+    }
+
+    function nextNews() {
+      index = (index + 1) % noticias.length;
+      showSlide(index);
+    }
+
+    function prevNews() {
+      index = (index - 1 + noticias.length) % noticias.length;
+      showSlide(index);
+    }
+
+    setInterval(() => {
+      if (noticias.length) nextNews();
+    }, 10000);
+
+    carregarNoticias();
   </script>
 </body>
 </html>
