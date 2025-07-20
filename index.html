@@ -42,25 +42,13 @@
       object-fit: cover;
       border-radius: 8px;
       margin-bottom: 12px;
+      background-color: #ddd;
     }
     .news-title {
       font-size: 1.1rem;
       font-weight: bold;
       margin-bottom: 8px;
       color: #222;
-    }
-    .news-desc {
-      font-size: 0.95rem;
-      color: #444;
-      max-height: 60px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .news-link {
-      margin-top: 10px;
-      font-size: 0.9rem;
-      text-decoration: none;
-      color: #0077cc;
     }
     .controls {
       display: flex;
@@ -99,13 +87,26 @@
       <button onclick="nextNews()">❯</button>
     </div>
   </div>
-  <div class="footer">Fontes: G1, UOL, TecMundo • Atualização automática via RSS</div>
+  <div class="footer">Fontes: G1, UOL, R7, CNN Brasil, Exame, BBC, Nexo, Folha, ESPN, Olhar Digital, AutoEsporte, Valor Econômico, Infomoney, Agência Brasil...</div>
 
   <script>
     const feeds = [
       'https://g1.globo.com/rss/g1/',
       'https://www.tecmundo.com.br/rss',
-      'https://rss.uol.com.br/feed/noticias.xml'
+      'https://rss.uol.com.br/feed/noticias.xml',
+      'https://www.r7.com/rss/',
+      'https://www.cnnbrasil.com.br/rss/',
+      'https://exame.com/feed/',
+      'https://olhardigital.com.br/feed/',
+      'https://www.autoesporte.com.br/rss',
+      'https://www.espn.com.br/rss',
+      'https://www.gov.br/agenciabrasil/rss',
+      'https://feeds.folha.uol.com.br/cotidiano/rss091.xml',
+      'https://feeds.folha.uol.com.br/ilustrada/rss091.xml',
+      'https://valor.globo.com/rss/',
+      'https://www.infomoney.com.br/feed/',
+      'https://www.nexojornal.com.br/rss',
+      'https://www.bbc.com/portuguese/index.xml'
     ];
 
     let noticias = [];
@@ -115,6 +116,20 @@
       const txt = document.createElement("textarea");
       txt.innerHTML = html;
       return txt.value;
+    }
+
+    function limparTexto(texto) {
+      return texto
+        .replace(/[\uFFFD\uFFFC]/g, '')
+        .replace(/\?o/g, 'ão')
+        .replace(/\?e/g, 'é')
+        .replace(/\?a/g, 'á')
+        .replace(/\?i/g, 'í')
+        .replace(/\?u/g, 'ú')
+        .replace(/\?c/g, 'ç')
+        .replace(/\?\?/g, '')
+        .replace(/\?/g, '')
+        .trim();
     }
 
     function extractImage(description) {
@@ -130,12 +145,13 @@
           const data = await res.json();
           data.items.slice(0, 3).forEach(item => {
             const imagemExtraida = extractImage(item.description);
-            noticias.push({
-              titulo: decodeHTML(item.title),
-              descricao: decodeHTML(item.description.replace(/<[^>]+>/g, '').slice(0, 120) + '...'),
-              link: item.link,
-              imagem: imagemExtraida || item.thumbnail || 'https://via.placeholder.com/600x180?text=Notícia'
-            });
+            const imagemFinal = imagemExtraida || item.thumbnail || null;
+            if (imagemFinal) {
+              noticias.push({
+                titulo: limparTexto(decodeHTML(item.title)),
+                imagem: imagemFinal
+              });
+            }
           });
         } catch (e) {
           console.error('Erro ao carregar feed:', feed);
@@ -150,8 +166,6 @@
         <div class="news-item ${i === 0 ? 'active' : ''}" id="item-${i}">
           <img src="${n.imagem}" class="news-img" alt="imagem">
           <div class="news-title">${n.titulo}</div>
-          <div class="news-desc">${n.descricao}</div>
-          <a class="news-link" href="${n.link}" target="_blank">Leia mais</a>
         </div>
       `).join('') + `
         <div class="controls">
